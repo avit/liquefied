@@ -50,7 +50,7 @@ class LiquefiedTest < Minitest::Test
     assert_equal '<12:34:56>', result
   end
 
-  def test_conversion_block
+  def test_number_conversion_block
     value = Liquefied.new(12.33333) { |i, *args|
       cents = args[0] || 2
       "$%.#{cents}f" % i
@@ -58,6 +58,17 @@ class LiquefiedTest < Minitest::Test
 
     assert_equal "$12.33", value.to_s
     assert_equal "$12",    value.to_s(0)
+    assert_equal "12",     value.to_s { |v| v.round.to_s }
+  end
+
+  def test_time_conversion_block
+    value = Liquefied.new(time, :short) { |i, *args|
+      args.any? ? i.to_s(*args) : "<time>#{i.to_s(*args)}</time>"
+    }
+
+    assert_equal "<time>2016-01-01 12:34:56 UTC</time>", value.to_s
+    assert_equal "12:34:56", value.to_s(:short)
+    assert_equal "*12:34:56*", value.to_s { |t| "*#{t.to_s(:short)}*" }
   end
 
   private
