@@ -51,9 +51,10 @@ class Liquefied < BasicObject
   end
 
   def _finalize!(*args, &block)
-    block = block || @default_block
     if block
-      block.call(@original, *args)
+      block.call(@original)
+    elsif @default_block
+      @default_block.call([@original, *args])
     else
       args = @default_args if args.empty?
       @original.public_send(@finalizer, *args, &block)
