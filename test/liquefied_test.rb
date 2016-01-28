@@ -58,7 +58,7 @@ class LiquefiedTest < Minitest::Test
 
     assert_equal "$12.33", value.to_s
     assert_equal "$12",    value.to_s(0)
-    assert_equal "12",     value.to_s { |v| v.round.to_s }
+    assert_equal "12",     value.to_s { |v, *args| v.round.to_s }
   end
 
   def test_time_conversion_block
