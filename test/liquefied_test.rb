@@ -71,6 +71,16 @@ class LiquefiedTest < Minitest::Test
     assert_equal "*12:34:56*", value.to_s { |t| "*#{t.to_s(:short)}*" }
   end
 
+  def test_string_wrapper_without_to_str_supports_explicit_conversion
+    value = Liquefied.new(StringObject.new("abcdef"))
+    assert_equal 'abcdef', value.to_str
+  end
+
+  def test_string_finalizes_to_str_as_implicit_conversion
+    value = Liquefied.new("abcdef", method: :to_str)
+    assert_equal 'abcdef', "#{value}"
+  end
+
   private
 
   def time

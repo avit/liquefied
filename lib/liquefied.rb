@@ -2,6 +2,10 @@ require 'liquefied/version'
 
 class Liquefied < BasicObject
 
+  METHOD_ALIASES = [
+    [:to_s, :to_str]
+  ]
+
   # Public: Wrap an object with a default finalizer method
   #
   # The object remains wrapped and responds to all its original methods
@@ -38,7 +42,7 @@ class Liquefied < BasicObject
   private
 
   def method_missing(method, *args, &block)
-    if method == @finalizer
+    if _finalizer?(method)
       _finalize!(*args, &block)
     else
       result = @original.public_send(method, *args, &block)
@@ -59,6 +63,12 @@ class Liquefied < BasicObject
       args = @default_args if args.empty?
       @original.public_send(@finalizer, *args, &block)
     end
+  end
+
+  def _finalizer?(method)
+    return true if method == @finalizer
+    both = [method, @finalizer]
+    METHOD_ALIASES.any? { |m| (m & both).size == 2 }
   end
 
 end

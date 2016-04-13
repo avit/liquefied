@@ -1,7 +1,6 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'liquefied'
 
-require 'pry'
 require 'minitest/autorun'
 
 class TimeObject
@@ -27,3 +26,12 @@ class TimeObject
   end
 end
 
+class StringObject
+  def initialize(value)
+    @value = value
+  end
+
+  def to_s
+    @value
+  end
+end
