@@ -39,12 +39,17 @@ class Liquefied < BasicObject
     @original == other
   end
 
+  def respond_to?(meth)
+    @original.respond_to?(meth)
+  end
+
   private
 
   def method_missing(method, *args, &block)
     if _finalizer?(method)
       _finalize!(*args, &block)
     else
+      ::Kernel.puts [method, *args].inspect
       result = @original.public_send(method, *args, &block)
       if result.class == @original.class
         ::Liquefied.new(result, *@default_args, method: @finalizer, &@default_block)
