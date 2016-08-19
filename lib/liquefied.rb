@@ -39,8 +39,8 @@ class Liquefied < BasicObject
     @original == other
   end
 
-  def respond_to?(meth)
-    @original.respond_to?(meth)
+  def respond_to?(meth, include_all=false)
+    @original.respond_to?(meth, include_all)
   end
 
   private
