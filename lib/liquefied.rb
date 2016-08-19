@@ -18,13 +18,13 @@ class Liquefied < BasicObject
   # object - The original value to wrap
   #
   # @example
-  #   Liquefied.new(12.333, :to_s) { |val| "%.2f" % val }
+  #   Liquefied.new(12.333, method: [:to_s]) { |val| "%.2f" % val }
   #   Liquefied.new(Date.new(2016,1,1), :to_s, :long)
   #   #=> "January 1, 2016"
   #
   def initialize(original, *default_args, method: :to_s, &default_block)
     @original = original
-    @finalizer = method
+    @finalizer = ::Kernel::Array(method)
     @default_args = default_args
     @default_block = default_block
   end
@@ -48,8 +48,8 @@ class Liquefied < BasicObject
   private
 
   def method_missing(method, *args, &block)
-    if _finalizer?(method)
-      _finalize!(*args, &block)
+    if (final_method = _get_finalizer(method))
+      _finalize!(final_method, *args, &block)
     else
       result = @original.public_send(method, *args, &block)
       if result.class == @original.class && !method.to_s.start_with?(CAST_PREFIX)
@@ -60,21 +60,22 @@ class Liquefied < BasicObject
     end
   end
 
-  def _finalize!(*args, &block)
+  def _finalize!(method, *args, &block)
     if block
       block.call(@original)
     elsif @default_block
       @default_block.call([@original, *args])
     else
       args = @default_args if args.empty?
-      @original.public_send(@finalizer, *args, &block)
+      @original.public_send(method, *args, &block)
     end
   end
 
-  def _finalizer?(method)
-    return true if method == @finalizer
-    both = [method, @finalizer]
-    METHOD_ALIASES.any? { |m| (m & both).size == 2 }
+  def _get_finalizer(method)
+    return method if @finalizer.include?(method)
+    both = [method, *@finalizer]
+    aliases = METHOD_ALIASES.find { |m| (m & both).size >= 2 }
+    aliases.find { |m| @original.respond_to?(m, true) } if aliases
   end
 
 end

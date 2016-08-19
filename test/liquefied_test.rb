@@ -96,6 +96,11 @@ class LiquefiedTest < Minitest::Test
     assert_equal 'abcdef', "#{value}"
   end
 
+  def test_multiple_finalizer_aliases
+    value = Liquefied.new(time, method: [:to_s, :to_json]) { "[12, 34, 56]" }
+    assert_equal '[12, 34, 56]', value.to_json
+  end
+
   private
 
   def time
