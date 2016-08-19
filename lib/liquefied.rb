@@ -73,7 +73,7 @@ class Liquefied < BasicObject
 
   def _get_finalizer(method)
     return method if @finalizer.include?(method)
-    both = [method, *@finalizer]
+    both = [*@finalizer, method]
     aliases = METHOD_ALIASES.find { |m| (m & both).size >= 2 }
     aliases.find { |m| @original.respond_to?(m, true) } if aliases
   end
