@@ -43,6 +43,21 @@ class LiquefiedTest < Minitest::Test
     assert_equal 56, value.sec
   end
 
+  def test_cast_same_type
+    value = Liquefied.new(123) { "..." }
+    result = value.to_i
+
+    assert_equal "123", "#{result}"
+  end
+
+  def test_cast_other_type
+    value = Liquefied.new(123) { "..." }
+    result = value.to_f
+
+    assert_equal "123.0", "#{result}"
+  end
+
+
   def test_implicit_conversion
     value = Liquefied.new(time, :short)
     result = "<%s>" % value

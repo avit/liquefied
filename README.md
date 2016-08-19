@@ -21,7 +21,14 @@ value to its output format. The default finalizer is `to_s`, which makes this
 pattern helpful for implicit formatting in templates, so `<%= price %>`
 outputs the formatted value.
 
-The finalizer can be set to any other method you want. 
+The finalizer can be set to any other method you want.
+
+Casting to the same type as the original will unwrap the original object:
+
+```
+count = Liquefied.new(1234) { "1,234" }
+count.to_i  # 1234
+```
 
 ### Use with ActiveSupport Core Extensions
 

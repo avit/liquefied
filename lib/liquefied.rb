@@ -6,6 +6,8 @@ class Liquefied < BasicObject
     [:to_s, :to_str]
   ]
 
+  CAST_PREFIX = "to_".freeze
+
   # Public: Wrap an object with a default finalizer method
   #
   # The object remains wrapped and responds to all its original methods
@@ -50,7 +52,7 @@ class Liquefied < BasicObject
       _finalize!(*args, &block)
     else
       result = @original.public_send(method, *args, &block)
-      if result.class == @original.class
+      if result.class == @original.class && !method.to_s.start_with?(CAST_PREFIX)
         ::Liquefied.new(result, *@default_args, method: @finalizer, &@default_block)
       else
         result
