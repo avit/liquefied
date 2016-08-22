@@ -33,7 +33,7 @@ class Liquefied < BasicObject
     "#<Liquefied(#{@original.class}):#{@original.object_id}>"
   end
 
-  def object
+  def itself
     @original
   end
 
