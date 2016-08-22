@@ -52,7 +52,7 @@ class Liquefied < BasicObject
       _finalize!(final_method, *args, &block)
     else
       result = @original.public_send(method, *args, &block)
-      if result.class == @original.class && !method.to_s.start_with?(CAST_PREFIX)
+      if result.class == @original.class
         ::Liquefied.new(result, *@default_args, method: @finalizer, &@default_block)
       else
         result
