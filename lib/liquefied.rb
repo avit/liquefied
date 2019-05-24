@@ -41,7 +41,7 @@ class Liquefied < BasicObject
     @original == other
   end
 
-  def respond_to?(meth, include_all=false)
+  def respond_to_missing?(meth, include_all=false)
     @original.respond_to?(meth, include_all)
   end
 
